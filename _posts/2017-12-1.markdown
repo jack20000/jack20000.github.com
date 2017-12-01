@@ -1,0 +1,77 @@
+---
+layout: post
+title:  "小球曲线运动"
+date:   2017-12-01
+categories: unity3d移动
+author: "长空"
+---
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class cast : MonoBehaviour {
+
+	public GameObject target;  
+	public float speed = 10;  
+	private float distanceToTarget;  
+	private bool move = true;  
+	public float angelmodu=30;  
+
+	void Start ()  
+	{  
+		//返回起点与终点之间的距离
+		distanceToTarget = Vector3.Distance (this.transform.position, target.transform.position); 
+		//StartCoroutine就是开启一个协程
+		StartCoroutine (Shoot ());  
+	}  
+
+	IEnumerator Shoot ()  
+	{  
+
+		while (move) {  
+			//目标地坐标
+			Vector3 targetPos = target.transform.position;  
+			//挂载脚本的对象朝向目标对象
+			this.transform.LookAt (targetPos);  
+
+			float angle = Mathf.Min (1, Vector3.Distance (this.transform.position, targetPos) / distanceToTarget) * angelmodu;  
+
+			//Mathf.Clamp(-angle,-42,42) 显示-angle在-42，42之间。
+			//Quaternion.Euler(x,0,0) 绕X轴旋转x库
+			//this.transform.rotation  旋转角度
+			this.transform.rotation = this.transform.rotation * Quaternion.Euler (Mathf.Clamp (-angle, -42, 42), 0, 0); 
+
+			//两者之间的直线距离
+			float currentDist = Vector3.Distance (this.transform.position, target.transform.position);  
+
+			print ("currentDist" + currentDist);  
+
+			if (currentDist < 0.5f)  
+				move = false; 
+			
+			//移动物体
+			this.transform.Translate (Vector3.forward * Mathf.Min (speed * Time.deltaTime, currentDist));  
+
+			yield return null;  //暂停协程，等待下一帧继续执行
+		}  
+	}  
+		
+	// Update is called once per frame
+	void Update () {
+		
+	}
+}
+
+{% highlight ruby %}
+def print_hi(name)
+  puts "Hi, #{name}"
+end
+print_hi('Tom')
+#=> prints 'Hi, Tom' to STDOUT.
+{% endhighlight %}
+
+Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
+
+[jekyll-docs]: http://jekyllrb.com/docs/home
+[jekyll-gh]:   https://github.com/jekyll/jekyll
+[jekyll-talk]: https://talk.jekyllrb.com/
